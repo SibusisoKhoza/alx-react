@@ -1,15 +1,20 @@
-import './body.css';
-const $ = require('jquery');
-const _ = require('lodash');
+const $ = require( "jquery" );
+// Load the full build
+const _ = require("lodash");
+import "./body.css";
 
-let counter = 0;
-
-$("<button>Click here to get started</button>").appendTo('body');
-$("<p id='count'></p>").appendTo('body');
+let count = 0;
 
 function updateCounter() {
-  counter++;
-  $('#count').html(`${counter} clicks on the button`);
+  count++;
+  $( "#count" ).text(`${count} clicks on the button` );
 }
 
-$("button").on("click", _.debounce(updateCounter, 500));
+const $button = $("<button>Click here to get started</button>").on(
+  "click",
+  _.debounce( updateCounter, 500, { leading: true, trailing: false })
+);
+
+$('body').append("<p>Dashboard data for the students</p>");
+$('body').append($button);
+$('body').append("<p id='count'></p>");
