@@ -1,9 +1,6 @@
 import $ from 'jquery';
-import img from "../../assets/holberton-logo.jpg"
-import "../footer/footer.css";
+import './header.css';
 
-$('body').append("<div id='logo'></div>");
-$('body').append("<h1>Holberton Dashboard</h1>");
-
-console.log("Init header");
-
+$('body').append('<div id="logo"></div>')
+$('body').append('<h1>Holberton Dashboard</h1>');
+console.log('Init header');
