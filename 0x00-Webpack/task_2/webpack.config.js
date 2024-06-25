@@ -1,62 +1,34 @@
 const path = require('path');
 
 module.exports = {
+  mode: 'production',
   entry: './js/dashboard_main.js',
   output: {
+    path: path.resolve(__dirname, 'public'),
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'public')
   },
-  mode: 'production',
+  performance: {
+    maxAssetSize: 1000000,
+  },
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env']
-          }
-        }
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
       },
       {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      },
-      {
-        test: /\.(png|jpg|jpeg|gif|ico)$/,
+        test: /\.(gif|png|jpe?g|svg)$/i,
         use: [
+          "file-loader",
           {
-            loader: 'file-loader',
+            loader: "image-webpack-loader",
             options: {
-              name: '[name].[hash].[ext]',
-              outputPath: 'images',
+              bypassOnDebug: true, // webpack@1.x
+              disable: true, // webpack@2.x and newer
             },
           },
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              mozjpeg: {
-                progressive: true,
-                quality: 65
-              },
-              optipng: {
-                enabled: true,
-              },
-              pngquant: {
-                quality: [0.65, 0.90],
-                speed: 4
-              },
-              gifsicle: {
-                interlaced: false,
-              },
-              webp: {
-                quality: 75
-              }
-            }
-          }
-        ]
-      }
-    ]
-  }
+        ],
+      },
+    ],
+  },
 };
