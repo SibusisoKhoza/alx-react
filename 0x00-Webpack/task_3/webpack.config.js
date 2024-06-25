@@ -3,32 +3,32 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  mode: 'development',
   entry: {
     header: './modules/header/header.js',
     body: './modules/body/body.js',
-    footer: './modules/footer/footer.js',
+    footer: './modules/footer/footer.js'
   },
   output: {
+    filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'public'),
-    filename: '[name].js',
-    chunkFilename: '[id].[chunkhash].js',
   },
-  performance: {
-    maxAssetSize: 1000000,
+  devServer: {
+    contentBase: "./public",
+    open: true,
+    port: 8564,
   },
+  plugins: [
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Output Management',
+    }),
+  ],
   optimization: {
     splitChunks: {
       chunks: 'all',
     },
   },
-  devServer: {
-    contentBase: path.join(__dirname, './public'),
-    compress: true,
-    port: 8564,
-  },
-  plugins: [new CleanWebpackPlugin(), new HtmlWebpackPlugin({filename: 'index.html'})],
-  devtool: 'inline-source-map',
+  mode: 'development',
   module: {
     rules: [
       {
@@ -36,18 +36,41 @@ module.exports = {
         use: ["style-loader", "css-loader"],
       },
       {
+        test: /\.(png|jpg|gif|svg)$/,
+        loader: 'file-loader',
+      },
+      {
         test: /\.(gif|png|jpe?g|svg)$/i,
         use: [
-          "file-loader",
+          'file-loader',
           {
-            loader: "image-webpack-loader",
+            loader: 'image-webpack-loader',
             options: {
-              bypassOnDebug: true, // webpack@1.x
-              disable: true, // webpack@2.x and newer
+              mozjpeg: {
+                progressive: true,
+              },
+              optipng: {
+                enabled: false,
+              },
+              pngquant: {
+                quality: [0.65, 0.90],
+                speed: 4
+              },
+              gifsicle: {
+                interlaced: false,
+              },
+              webp: {
+                quality: 75
+              }
             },
           },
-        ],
+        ]
       },
-    ],
-  },
-};
+      {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"],
+      },
+    ]
+  }
+}

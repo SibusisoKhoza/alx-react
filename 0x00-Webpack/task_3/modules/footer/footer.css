@@ -1,3 +1,4 @@
-footer {
-  align-items: center;
+#footer {
+    color: #fff;
+    background: #525252;
 }
