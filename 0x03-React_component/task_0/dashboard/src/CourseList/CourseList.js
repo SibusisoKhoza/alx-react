@@ -1,7 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import CourseListRow from './CourseListRow';
+import React from "react";
 import "./CourseList.css";
+import CourseListRow from "./CourseListRow";
+import PropTypes from "prop-types";
+import CourseShape from "./CourseShape";
 
 function CourseList({ listCourses }) {
   return (
@@ -11,19 +12,10 @@ function CourseList({ listCourses }) {
         <CourseListRow textFirstCell="Course name" textSecondCell="Credit" isHeader={true} />
       </thead>
       <tbody>
-        {listCourses.length === 0 ? (
-          <tr>
-            <td colSpan="2">No course available yet</td>
-          </tr>
+        {listCourses.length > 0 ? (
+          listCourses.map(({ id, name, credit }) => <CourseListRow key={id} textFirstCell={name} textSecondCell={credit} />)
         ) : (
-          listCourses.map((course) => (
-            <CourseListRow
-              key={course.id}
-              textFirstCell={course.name}
-              textSecondCell={course.credit.toString()}
-              isHeader={false}
-            />
-          ))
+          <CourseListRow textFirstCell="No course available yet" />
         )}
       </tbody>
     </table>
@@ -31,13 +23,7 @@ function CourseList({ listCourses }) {
 }
 
 CourseList.propTypes = {
-  listCourses: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      credit: PropTypes.number.isRequired,
-    })
-  ),
+  listCourses: PropTypes.arrayOf(CourseShape),
 };
 
 CourseList.defaultProps = {
