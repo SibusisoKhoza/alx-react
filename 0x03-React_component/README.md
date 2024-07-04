@@ -1,3 +1,1 @@
-### this is a README.md file
-ALX SE PROGRAM
-COHORT 12
+0x03-React_component
