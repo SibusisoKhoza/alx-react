@@ -1,30 +1,38 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import NotificationItem from './NotificationItem';
+import React from "react";
+import NotificationItem from "./NotificationItem";
+import { shallow } from "enzyme";
 
-describe('NotificationItem component', () => {
-    it('calls markAsRead with the correct ID when clicked', () => {
-        // Mock the markAsRead function using a spy
-        const markAsReadSpy = jest.fn();
+describe("rendering components", () => {
+  it("renders NotificationItem component without crashing", () => {
+    const wrapper = shallow(<NotificationItem />);
 
-        const notification = {
-            id: 1,
-            type: "info",
-            value: "Notification 1",
-        };
+    expect(wrapper.exists()).toBe(true);
+  });
 
-        const wrapper = shallow(
-            <NotificationItem
-            id={notification.id}
-            type={notification.type}
-            value={notification.value}
-            markAsRead={markAsReadSpy} // Pass the spy as a prop
-            />);
+  it('renders correct html from type="default" value="test" props', () => {
+    const wrapper = shallow(<NotificationItem />);
 
-            // Simulate a click on the NotificationItem
-            wrapper.find('li').simulate('click');
+    wrapper.setProps({ type: "default", value: "test" });
+    expect(wrapper.html()).toEqual('<li data-notification-type="default">test</li>');
+  });
 
-            // Expect markAsRead to be called with the correct ID
-            expect(markAsReadSpy).toHaveBeenCalledWith(notification.id);
-    });
+  it('renders correct html from  html="<u>test</u>" props', () => {
+    const wrapper = shallow(<NotificationItem />);
+
+    wrapper.setProps({ html: "<u>test</u>" });
+    expect(wrapper.html()).toEqual('<li data-urgent="true"><u>test</u></li>');
+  });
+});
+
+describe("onclick event behaves as it should", () => {
+  it("should call console.log", () => {
+    const wrapper = shallow(<NotificationItem />);
+    const spy = jest.fn();
+
+    wrapper.setProps({ value: "test item", markAsRead: spy, id: 1 });
+    wrapper.find("li").props().onClick();
+    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledWith(1);
+    spy.mockRestore();
+  });
 });

@@ -1,26 +1,25 @@
 .Notifications {
-  border: 1px dashed red;
-  padding: 5px;
+  padding: 1em;
+  border: 2px dashed red;
+  position: absolute;
+  top: 1.8em;
+  right: 0;
 }
 
-.Notifications li[data-priority="default"] {
-  color: blue;
-}
-
-.Notifications li[data-priority="urgent"] {
-  color: red;
-}
-
-.Notifications button img {
-  width: 16px;
-  height: 16px;
-}
-
-.Notifications li:nth-child(3) {
-  color: red;
+.notification-header {
+  display: flex;
+  justify-content: space-between;
 }
 
 .menuItem {
-  display: flex;
-  justify-content: flex-end;
+  text-align: right;
+}
+
+[data-notification-type="default"] {
+  color: blue;
+}
+
+[data-urgent],
+[data-notification-type="urgent"] {
+  color: red;
 }

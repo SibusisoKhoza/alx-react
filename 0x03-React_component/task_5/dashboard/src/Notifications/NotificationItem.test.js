@@ -1,51 +1,38 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import Notifications from './Notifications';
-import NotificationItem from './NotificationItem';
+import React from "react";
+import NotificationItem from "./NotificationItem";
+import { shallow } from "enzyme";
 
-describe('Notifications Component', () => {
-  let wrapper;
+describe("rendering components", () => {
+  it("renders NotificationItem component without crashing", () => {
+    const wrapper = shallow(<NotificationItem />);
 
-  describe('With empty listNotifications or no listNotifications prop', () => {
-    beforeEach(() => {
-      wrapper = shallow(<Notifications displayDrawer={true} />);
-    });
-
-    it('renders correctly without crashing', () => {
-      expect(wrapper.exists()).toBe(true);
-    });
-
-    it('renders "No new notification for now" when listNotifications is empty', () => {
-      wrapper.setProps({ listNotifications: [] });
-      expect(wrapper.find(NotificationItem).length).toBe(1);
-      expect(wrapper.find(NotificationItem).prop('value')).toBe('No new notification for now');
-    });
-
-    it('does not render "Here is the list of notifications"', () => {
-      wrapper.setProps({ listNotifications: [] });
-      expect(wrapper.find('p').text()).not.toBe('Here is the list of notifications');
-    });
+    expect(wrapper.exists()).toBe(true);
   });
 
-  describe('With listNotifications containing elements', () => {
-    const listNotifications = [
-      { id: 1, type: 'default', value: 'New course available' },
-      { id: 2, type: 'urgent', value: 'New resume available' },
-      { id: 3, type: 'urgent', html: { __html: '<strong>Urgent requirement</strong> - complete by EOD' } },
-    ];
+  it('renders correct html from type="default" value="test" props', () => {
+    const wrapper = shallow(<NotificationItem />);
 
-    beforeEach(() => {
-      wrapper = shallow(<Notifications displayDrawer={true} listNotifications={listNotifications} />);
-    });
+    wrapper.setProps({ type: "default", value: "test" });
+    expect(wrapper.html()).toEqual('<li data-notification-type="default">test</li>');
+  });
 
-    it('renders the correct number of NotificationItem components', () => {
-      expect(wrapper.find(NotificationItem).length).toBe(3);
-    });
+  it('renders correct html from  html="<u>test</u>" props', () => {
+    const wrapper = shallow(<NotificationItem />);
 
-    it('renders the NotificationItems with the correct values', () => {
-      expect(wrapper.find(NotificationItem).at(0).prop('value')).toBe('New course available');
-      expect(wrapper.find(NotificationItem).at(1).prop('value')).toBe('New resume available');
-      expect(wrapper.find(NotificationItem).at(2).prop('html')).toEqual({ __html: '<strong>Urgent requirement</strong> - complete by EOD' });
-    });
+    wrapper.setProps({ html: "<u>test</u>" });
+    expect(wrapper.html()).toEqual('<li data-urgent="true"><u>test</u></li>');
+  });
+});
+
+describe("onclick event behaves as it should", () => {
+  it("should call console.log", () => {
+    const wrapper = shallow(<NotificationItem />);
+    const spy = jest.fn();
+
+    wrapper.setProps({ value: "test item", markAsRead: spy, id: 1 });
+    wrapper.find("li").props().onClick();
+    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledWith(1);
+    spy.mockRestore();
   });
 });
