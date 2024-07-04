@@ -1,21 +1,37 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import NotificationItem from './NotificationItem';
+import { shallow } from "enzyme";
+import Notifications from "./Notifications";
 
-describe('NotificationItem Component', () => {
-  it('calls markAsRead function with correct ID', () => {
-    const markAsRead = jest.fn();
-    const wrapper = mount(
-      <NotificationItem
-        id={1}
-        type="default"
-        value="New course available"
-        markAsRead={markAsRead}
-      />
-    );
+describe("Notifications component", () => {
+    it("calls markAsRead with the correct message when NotificationItem is clicked", () => {
+        // Mock the console.log function
+        const consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
 
-    wrapper.find('li').simulate('click');
+        const notifications = [
+            {
+                id: 1,
+                type: "info",
+                value: "Notification 1"
+            },
+            {
+                id: 2,
+                type: "warning",
+                value: "Notification 2",
+            },
+        ];
 
-    expect(markAsRead).toHaveBeenCalledWith(1);
-  });
+        const wrapper = shallow(<Notifications displayDrawer={true} listNotifications={notifications} />);
+
+        // Find the first NotificationItem component in the rendered output
+        const notificationItem = wrapper.find ("NotificationItem").first();
+
+        // Simulate a click on the NotificationItem
+        notificationItem.props().markAsRead(1);
+
+        // Expect markAsRead to be called with the correct message
+        expect(consoleLogSpy).toHaveBeenCalledWith("Notification 1 has been marked as read");
+
+        // Restore the original console.log function
+        consoleLogSpy.mockRestore();
+    });
 });

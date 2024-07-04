@@ -1,37 +1,34 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
-import WithLogging from './WithLogging';
-import Login from '../Login/Login';
+import { render, unmountComponentAtNode } from 'react-dom';
+import WithLogging './WithLogging';
 
 // Mock console.log
-global.console = {
-  log: jest.fn()
-};
+console.log = jest.fn();
+
+// Test component to use with the high order component
+const TestComponent = () => <p>Test Component</p>;
+const WrappedComponent = WithLogging(TestComponent);
 
 describe('WithLogging HOC', () => {
-  beforeEach(() => {
-    console.log.mockClear();
-  });
+    let container = null;
 
-  it('logs Component is mounted and Component is going to unmount with pure HTML', () => {
-    const WrappedComponent = WithLogging(() => <p />);
-    const wrapper = mount(<WrappedComponent />);
-    
-    expect(console.log).toHaveBeenCalledWith('Component Component is mounted');
-    
-    wrapper.unmount();
-    
-    expect(console.log).toHaveBeenCalledWith('Component Component is going to unmount');
-  });
+    beforeEach(() => {
+        // Set up a DOM element as a render target
+        container = document.createElement('div');
+        document.body.appendChild(container);
+    });
 
-  it('logs Component Login is mounted and Component Login is going to unmount with Login component', () => {
-    const WrappedComponent = WithLogging(Login);
-    const wrapper = mount(<WrappedComponent />);
-    
-    expect(console.log).toHaveBeenCalledWith('Component Login is mounted');
-    
-    wrapper.unmount();
-    
-    expect(console.log).toHaveBeenCalledWith('Component Login is going to unmount');
-  });
+    afterEach(() => {
+        // Clean up on exiting
+        unmountComponentAtNode(container);
+        container.remove()
+    });
+
+    it('should log when wrapped element is pure HTML', () => {
+        render(<WrappedComponent />, container);
+
+        // Assert that console.log was called on mount and unmount with the component name
+        expect(console.log).toHaveBeenCalledWith('Component Login is mounted on componentDidMount');
+        expect(console.log).toHaveBeenCalledWith('Component Login is going to unmount on ComponentWillUnmount');
+    });
 });

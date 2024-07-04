@@ -1,25 +1,19 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import BodySectionWithMarginBottom from './BodySectionWithMarginBottom';
-import BodySection from '../BodySection/BodySection';
 
-describe('BodySectionWithMarginBottom Component', () => {
-  it('renders BodySection component with props passed correctly', () => {
-    const title = 'Test Title';
-    const children = <p>Test Children</p>;
-
-    const wrapper = shallow(
-      <BodySectionWithMarginBottom title={title}>
-        {children}
-      </BodySectionWithMarginBottom>
+test('renders BodySectionWithMarginBottom component with correct props and CSS applied', () => {
+    const { getBytext, getByTestId } = render(
+        <BodySectionWithMarginBottom title="test title">
+            <p>test children node</p>
+        </BodySectionWithMarginBottom>
     );
 
-    expect(wrapper.find(BodySection)).toHaveLength(1);
+    const titleElement = getBytext('test title');
+    const childrenElement = getBytext('test children node');
+    const wrapperElement = getByTestId('bodySectionWithMarginTestId');
 
-    const bodySectionProps = wrapper.find(BodySection).props();
-    expect(bodySectionProps.title).toEqual(title);
-    expect(bodySectionProps.children).toEqual(children);
-
-    expect(wrapper.hasClass('bodySectionWithMargin')).toBe(true);
-  });
+    expect(titleElement).toBeInTheDocument();
+    expect(childrenElement).toBeInTheDocument();
+    expect(wrapperElement).toHaveStyle('margin-bottom: 40px')
 });

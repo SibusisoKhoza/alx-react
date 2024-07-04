@@ -1,26 +1,24 @@
-// App.test.js
 import React from 'react';
-import { render } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { shallow } from 'enzyme';
 import App from './App';
+import Login from './Login';
+import CourseList from '../CourseList/CourseList';
 
-test('renders without crashing', () => {
-  render(<App />);
-});
+describe ('App component', () => {
+    it('should not display CourseList when isLoggedIn is false', () => {
+        const wrapper = shallow(<App isLoggedIn={false} />);
+        expect(wrapper.find(CourseList)).toHaveLength(0);
+    });
 
-test('does not display CourseList when isLoggedIn is false', () => {
-  const { queryByText } = render(<App />);
-  expect(queryByText('Available courses')).toBeNull();
-});
+    describe('when isLoggedIn is true', () => {
+        it('it should not include Login component', () => {
+            const wrapper = shallow(<App isLoggedIn={true} />);
+            expect(wrapper.find(Login)).toHaveLength(0);
+        });
 
-describe('when isLoggedIn is true', () => {
-  test('does not include Login component', () => {
-    const { queryByText } = render(<App isLoggedIn={true} />);
-    expect(queryByText('Login')).toBeNull();
-  });
-
-  test('includes CourseList component', () => {
-    const { getByText } = render(<App isLoggedIn={true} />);
-    expect(getByText('Available courses')).toBeInTheDocument();
-  });
+        it('should include CourseList component', () => {
+            const wrapper = shallow(<App isLoggedIn={true} />);
+            expect(wrapper.find(CourseList)).toHaveLength(1);
+        });
+    });
 });

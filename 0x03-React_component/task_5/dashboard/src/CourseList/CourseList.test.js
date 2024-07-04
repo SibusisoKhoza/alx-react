@@ -1,49 +1,64 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import CourseList from './CourseList';
-import CourseListRow from './CourseListRow';
+import CourseListRow from "./CourseListRow";
+import CourseList from "./CourseList";
+import { render } from '@testing-library/react';
 
 describe('CourseList Component', () => {
-  let wrapper;
-
-  describe('With empty listCourses or no listCourses prop', () => {
-    beforeEach(() => {
-      wrapper = shallow(<CourseList />);
-    });
-
-    it('renders correctly without crashing', () => {
-      expect(wrapper.exists()).toBe(true);
-    });
-
-    it('renders "No course available yet" when listCourses is empty', () => {
-      wrapper.setProps({ listCourses: [] });
-      expect(wrapper.find(CourseListRow).length).toBe(3); // Two header rows + one "No course available yet" row
-      expect(wrapper.find(CourseListRow).at(2).prop('textFirstCell')).toBe('No course available yet');
-    });
+  it('renders CourseList component without crashing', () => {
+    const wrapper = shallow(<CourseList />);
+    expect(wrapper.exists()).toBe(true);
   });
 
-  describe('With listCourses containing elements', () => {
-    const listCourses = [
+  it('renders the 5 different rows', () => {
+    const { getAllByText } = render(<CourseList />);
+  
+    
+    expect(getAllByText(/Available courses|Course name|ES6|Webpack|React/)).toHaveLength(5);
+  });
+
+  it('renders correctly with an empty listCourses or no prop', () => {
+    const wrapper = shallow(<CourseList />);
+    expect(wrapper.find(CourseListRow)).toHaveLength(0);
+  });
+
+  it('renders courses correctly with a listCourses prop', () => {
+    const courses = [
       { id: 1, name: 'ES6', credit: 60 },
       { id: 2, name: 'Webpack', credit: 20 },
       { id: 3, name: 'React', credit: 40 },
     ];
-
-    beforeEach(() => {
-      wrapper = shallow(<CourseList listCourses={listCourses} />);
+    const wrapper = shallow(<CourseList listCourses={courses} />);
+    expect(wrapper.find(CourseListRow)).toHaveLength(courses.length);
+  });
+  
+  describe('CourseListRow', () => {
+    it('renders one cell with colspan = 2 when isHeader is true and textSecondCell does not exist', () => {
+      const wrapper = shallow(<CourseListRow isHeader={true} textFirstCell="Header Cell" />);
+      const th = wrapper.find('th');
+      expect(th.length).toBe(1);
+      expect(th.props().colSpan).toBe('2');
+      expect(th.text()).toBe('Header Cell');
     });
 
-    it('renders the correct number of CourseListRow components', () => {
-      expect(wrapper.find(CourseListRow).length).toBe(5); // Two header rows + three course rows
+    it('renders two cells when isHeader is true and textSecondCell is present', () => {
+      const wrapper = shallow(
+        <CourseListRow isHeader={true} textFirstCell="Header Cell" textSecondCell="Second Cell" />
+      );
+      const th = wrapper.find('th');
+      expect(th.length).toBe(2);
+      expect(th.at(0).text()).toBe('Header Cell');
+      expect(th.at(1).text()).toBe('Second Cell');
     });
 
-    it('renders the CourseListRows with the correct values', () => {
-      expect(wrapper.find(CourseListRow).at(2).prop('textFirstCell')).toBe('ES6');
-      expect(wrapper.find(CourseListRow).at(2).prop('textSecondCell')).toBe(60);
-      expect(wrapper.find(CourseListRow).at(3).prop('textFirstCell')).toBe('Webpack');
-      expect(wrapper.find(CourseListRow).at(3).prop('textSecondCell')).toBe(20);
-      expect(wrapper.find(CourseListRow).at(4).prop('textFirstCell')).toBe('React');
-      expect(wrapper.find(CourseListRow).at(4).prop('textSecondCell')).toBe(40);
+    it('renders correctly two td elements within a tr element when isHeader is false', () => {
+      const wrapper = shallow(<CourseListRow isHeader={false} textFirstCell="Cell 1" textSecondCell="Cell 2" />);
+      const tr = wrapper.find('tr');
+      const td = tr.find('td');
+      expect(tr.length).toBe(1);
+      expect(td.length).toBe(2);
+      expect(td.at(0).text()).toBe('Cell 1');
+      expect(td.at(1).text()).toBe('Cell 2');
     });
   });
 });

@@ -1,51 +1,55 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import Notifications from './Notifications';
-import NotificationItem from './NotificationItem';
+import React from "react";
+import { render } from "@testing-library/react";
+import Notifications from "./Notifications";
 
-describe('Notifications Component', () => {
-  let wrapper;
-
-  describe('With empty listNotifications or no listNotifications prop', () => {
-    beforeEach(() => {
-      wrapper = shallow(<Notifications displayDrawer={true} />);
-    });
-
-    it('renders correctly without crashing', () => {
-      expect(wrapper.exists()).toBe(true);
-    });
-
-    it('renders "No new notification for now" when listNotifications is empty', () => {
-      wrapper.setProps({ listNotifications: [] });
-      expect(wrapper.find(NotificationItem).length).toBe(1);
-      expect(wrapper.find(NotificationItem).prop('value')).toBe('No new notification for now');
-    });
-
-    it('does not render "Here is the list of notifications"', () => {
-      wrapper.setProps({ listNotifications: [] });
-      expect(wrapper.find('p').text()).not.toBe('Here is the list of notifications');
-    });
+describe("Notifications Component", () => {
+  it("displays menu item when displayDrawer is false", () => {
+    const { queryByText } = render(<Notifications displayDrawer={false} />);
+    const menuItem = queryByText("Your notifications");
+    expect(menuItem).toBeInTheDocument();
   });
 
-  describe('With listNotifications containing elements', () => {
-    const listNotifications = [
-      { id: 1, type: 'default', value: 'New course available' },
-      { id: 2, type: 'urgent', value: 'New resume available' },
-      { id: 3, type: 'urgent', html: { __html: '<strong>Urgent requirement</strong> - complete by EOD' } },
+  it("does not display div.Notifications when displayDrawer is false", () => {
+    const { queryByTestId } = render(<Notifications displayDrawer={false} />);
+    const notificationsDiv = queryByTestId("notifications");
+    expect(notificationsDiv).not.toBeInTheDocument();
+  });
+
+  it("displays menu item when displayDrawer is true", () => {
+    const { queryByText } = render(<Notifications displayDrawer={true} />);
+    const menuItem = queryByText("Your notifications");
+    expect(menuItem).toBeInTheDocument();
+  });
+
+  it("displays div.Notifications when displayDrawer is true", () => {
+    const { queryByTestId } = render(<Notifications displayDrawer={true} />);
+    const notificationsDiv = queryByTestId("notifications");
+    expect(notificationsDiv).toBeInTheDocument();
+  });
+
+  it("renders correctly with an empty listNotifications or no prop", () => {
+    const { queryByText, queryByTestId } = render(<Notifications />);
+    const menuItem = queryByText("Your notifications");
+    const notificationsDiv = queryByTestId("notifications");
+    expect(menuItem).toBeInTheDocument();
+    expect(notificationsDiv).not.toBeInTheDocument();
+  });
+
+  it("renders notifications correctly with a listNotifications prop", () => {
+    const notifications = [
+      { id: 1, html: { __html: "Notification 1" }, type: "default", value: "Notification 1" },
+      { id: 2, html: { __html: "Notification 2" }, type: "urgent", value: "Notification 2" },
     ];
+    const { queryByText } = render(<Notifications listNotifications={notifications} />);
+    const notification1 = queryByText("Notification 1");
+    const notification2 = queryByText("Notification 2");
+    expect(notification1).toBeInTheDocument();
+    expect(notification2).toBeInTheDocument();
+  });
 
-    beforeEach(() => {
-      wrapper = shallow(<Notifications displayDrawer={true} listNotifications={listNotifications} />);
-    });
-
-    it('renders the correct number of NotificationItem components', () => {
-      expect(wrapper.find(NotificationItem).length).toBe(3);
-    });
-
-    it('renders the NotificationItems with the correct values', () => {
-      expect(wrapper.find(NotificationItem).at(0).prop('value')).toBe('New course available');
-      expect(wrapper.find(NotificationItem).at(1).prop('value')).toBe('New resume available');
-      expect(wrapper.find(NotificationItem).at(2).prop('html')).toEqual({ __html: '<strong>Urgent requirement</strong> - complete by EOD' });
-    });
+  it("displays the message 'No new notification for now' when listNotifications is empty", () => {
+    const { queryByText } = render(<Notifications listNotifications={[]} />);
+    const noNotificationMessage = queryByText("No new notification for now");
+    expect(noNotificationMessage).toBeInTheDocument();
   });
 });

@@ -1,17 +1,15 @@
-// Login.test.js
-import React from 'react';
-import { render } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import Login from './Login';
+import { shallow } from "enzyme";
+import React from "react";
+import Login from "./Login";
 
-test('shallow render Login component without crashing', () => {
-  render(<Login />);
-});
-
-test('renders 2 input tags and 2 label tags', () => {
-  const { container } = render(<Login />);
-  const inputs = container.querySelectorAll('input');
-  const labels = container.querySelectorAll('label');
-  expect(inputs.length).toBe(2);
-  expect(labels.length).toBe(2);
+describe("Header", () => {
+  it("should render without crashing", () => {
+    const wrapper = shallow(<Login />);
+    expect(wrapper.exists()).toEqual(true);
+  });
+  it("should have 2 input tags and 2 label tags", () => {
+    const wrapper = shallow(<Login />);
+    expect(wrapper.find("label")).toHaveLength(2);
+    expect(wrapper.find("input")).toHaveLength(2);
+  });
 });

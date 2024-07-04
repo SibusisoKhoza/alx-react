@@ -4,41 +4,37 @@ import PropTypes from 'prop-types';
 class NotificationItem extends Component {
   constructor(props) {
     super(props);
+
+    // Bind the handleClick function in the constructor
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick() {
-    const { id, markAsRead } = this.props;
-    markAsRead(id);
+    const { markAsRead, id } = this.props;
+    if (markAsRead) {
+      markAsRead(id);
+    }
   }
 
   render() {
-    const { type, value, html } = this.props;
-
+    const { type = 'default', html, value } = this.props;
     return (
-      <li onClick={this.handleClick} data-notification-type={type}>
-        {html ? (
-          <span dangerouslySetInnerHTML={html} />
-        ) : (
-          <span>{value}</span>
-        )}
+      <li data-notification-type={type} onClick={this.handleClick}>
+        {value && <p>{value}</p>}
+        {html && <div dangerouslySetInnerHTML={{ __html: html.__html }} />}
       </li>
     );
   }
 }
 
 NotificationItem.propTypes = {
-  type: PropTypes.string,
-  value: PropTypes.string,
-  html: PropTypes.shape({
-    __html: PropTypes.string,
-  }),
   id: PropTypes.number.isRequired,
-  markAsRead: PropTypes.func.isRequired,
-};
-
-NotificationItem.defaultProps = {
-  type: 'default',
+  type: PropTypes.string,
+  html: PropTypes.shape({
+    __html: PropTypes.string.isRequired,
+  }),
+  value: PropTypes.string.isRequired,
+  markAsRead: PropTypes.func, // Add markAsRead as a prop
 };
 
 export default NotificationItem;

@@ -1,44 +1,43 @@
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types'
 
-class NotificationItem extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-  }
+class NotificationItem extends Component {
+    shouldComponentUpdate(nextProps) {
+        return (
+            nextProps.id !== this.props.id ||
+            nextProps.type !== this.props.type ||
+            nextProps.html !== this.props.type ||
+            nextProps.value !== this.props.value
+        );
+    }
 
-  handleClick() {
-    const { id, markAsRead } = this.props;
-    markAsRead(id);
-  }
+    handleClick = () => {
+        const { markAsRead, id } = this.props;
+        if (markAsRead) {
+            markAsRead(id);
+        }
+    };
 
-  render() {
-    const { type, value, html } = this.props;
-
-    return (
-      <li onClick={this.handleClick} data-notification-type={type}>
-        {html ? (
-          <span dangerouslySetInnerHTML={html} />
-        ) : (
-          <span>{value}</span>
-        )}
-      </li>
-    );
-  }
+    render() {
+        const {type = 'default', html, value } = this.props;
+        return (
+            <li data-notification-type={type} onClick={this.handleClick}>
+                {value && <p>{value}</p>}
+                {html && <div dangerouslySetInnerHTML={{ __html: html.__html}} />}
+            </li>
+        );
+    }
 }
 
-NotificationItem.propTypes = {
-  type: PropTypes.string,
-  value: PropTypes.string,
-  html: PropTypes.shape({
-    __html: PropTypes.string,
-  }),
-  id: PropTypes.number.isRequired,
-  markAsRead: PropTypes.func.isRequired,
-};
+NotificationItem.PropTypes = {
+    id: PropTypes.number.isRequired,
+    type: PropTypes.string,
+    html: PropTypes.shape({
+        __html: PropTypes.string.isRequired,
+    }),
 
-NotificationItem.defaultProps = {
-  type: 'default',
+    value: PropTypes.string.isRequired,
+    markAsRead: PropTypes.func, // Add markAsRead as a prop
 };
 
 export default NotificationItem;

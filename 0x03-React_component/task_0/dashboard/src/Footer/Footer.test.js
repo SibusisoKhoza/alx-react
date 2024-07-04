@@ -1,14 +1,15 @@
-// Footer.test.js
-import React from 'react';
-import { render } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import Footer from './Footer';
+import { shallow } from "enzyme";
+import React from "react";
+import Footer from "./Footer";
+import { getFullYear, getFooterCopy } from "../utils/utils";
 
-test('shallow render Footer component without crashing', () => {
-  render(<Footer />);
-});
-
-test('renders the text “Copyright”', () => {
-  const { getByText } = render(<Footer />);
-  expect(getByText(/Copyright/i)).toBeInTheDocument();
+describe("Footer test", () => {
+  it("should render without crashing", () => {
+    const wrapper = shallow(<Footer />);
+    expect(wrapper.exists()).toEqual(true);
+  });
+  it("should render the text Copyright", () => {
+    const wrapper = shallow(<Footer />);
+    expect(wrapper.text()).toEqual(`Copyright ${getFullYear()} - ${getFooterCopy()}`);
+  });
 });

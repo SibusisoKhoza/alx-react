@@ -1,22 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const CourseListRow = ({ isHeader, textFirstCell, textSecondCell = null }) => {
+const CourseListRow = ({ isHeader, textFirstCell, textSecondCell }) => {
   return (
     <tr>
       {isHeader ? (
-        textSecondCell === null ? (
+        <>
           <th colSpan="2">{textFirstCell}</th>
-        ) : (
-          <>
-            <th>{textFirstCell}</th>
-            <th>{textSecondCell}</th>
-          </>
-        )
+        </>
       ) : (
         <>
           <td>{textFirstCell}</td>
-          <td>{textSecondCell}</td>
+          <td>{textSecondCell !== null ? textSecondCell : 'null'}</td>
         </>
       )}
     </tr>
@@ -26,12 +21,7 @@ const CourseListRow = ({ isHeader, textFirstCell, textSecondCell = null }) => {
 CourseListRow.propTypes = {
   isHeader: PropTypes.bool,
   textFirstCell: PropTypes.string.isRequired,
-  textSecondCell: PropTypes.string,
-};
-
-CourseListRow.defaultProps = {
-  isHeader: false,
-  textSecondCell: null,
+  textSecondCell: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default CourseListRow;

@@ -1,17 +1,15 @@
-// Header.test.js
-import React from 'react';
-import { render } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import Header from './Header';
+import React from "react";
+import Header from "./Header";
+import { shallow } from "enzyme";
 
-test('shallow render Header component without crashing', () => {
-  render(<Header />);
-});
-
-test('renders img and h1 tags', () => {
-  const { container } = render(<Header />);
-  const img = container.querySelector('img');
-  const h1 = container.querySelector('h1');
-  expect(img).toBeInTheDocument();
-  expect(h1).toBeInTheDocument();
+describe("Header", () => {
+  it("render without crashing", () => {
+    const wrapper = shallow(<Header />);
+    expect(wrapper.exists()).toEqual(true);
+  });
+  it("should render a h1", () => {
+    const wrapper = shallow(<Header />);
+    expect(wrapper.exists("img")).toEqual(true);
+    expect(wrapper.containsMatchingElement(<h1>School dashboard</h1>)).toEqual(true);
+  });
 });

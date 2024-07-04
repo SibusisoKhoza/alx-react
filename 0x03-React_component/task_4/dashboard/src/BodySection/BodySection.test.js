@@ -1,15 +1,20 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import BodySection from './BodySection';
 
-describe('BodySection Component', () => {
-  it('renders children and h2 element correctly', () => {
-    const wrapper = shallow(
-      <BodySection title="test title">
+
+
+test('renders BodySection component with children and title', () => {
+    const { getByText } = render(
+    <BodySection title="test title">
         <p>test children node</p>
-      </BodySection>
+    </BodySection>
     );
-    expect(wrapper.find('h2').text()).toEqual('test title');
-    expect(wrapper.find('p').text()).toEqual('test children node');
-  });
-});
+
+    const titleElement = getByText('test title');
+    const childrenElement = getByText('test children node');
+
+    expect(titleElement).toBeInTheDocument();
+    expect(childrenElement).toBeInTheDocument();
+    expect(titleElement.tagName).toBe('H2');
+})

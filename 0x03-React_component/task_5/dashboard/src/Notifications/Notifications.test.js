@@ -1,36 +1,75 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import Notifications from './Notifications';
-import NotificationItem from './NotificationItem';
 
-describe('Notifications Component', () => {
-  let wrapper;
-  let listNotifications;
-
-  beforeEach(() => {
-    listNotifications = [
-      { id: 1, type: 'default', value: 'New course available' },
-      { id: 2, type: 'urgent', value: 'New resume available' },
-      { id: 3, type: 'urgent', html: { __html: '<strong>Urgent requirement</strong> - complete by EOD' } },
+describe('Notifications component', () => {
+  it('should not rerender when props are updated with the same list', () => {
+    const notifications = [
+      {
+        id: 1,
+        type: 'info',
+        value: 'Notification 1'
+      },
+      {
+        id: 2,
+        type: 'warning',
+        value: 'Notification 2'
+      },
     ];
-    wrapper = shallow(<Notifications displayDrawer={true} listNotifications={listNotifications} />);
-  });
 
-  it('does not rerender when updating props with the same list', () => {
-    const shouldComponentUpdateSpy = jest.spyOn(Notifications.prototype, 'shouldComponentUpdate');
-    wrapper.setProps({ listNotifications: listNotifications });
-    expect(shouldComponentUpdateSpy).toHaveReturnedWith(false);
+    const wrapper = shallow(<Notifications displayDrawer={true} listNotifications={notifications} />);
+
+    const shouldComponentUpdateSpy = jest.spyOn(
+      Notifications.prototype,
+      'shouldComponentUpdate'
+    );
+
+    // Update props with the same list
+    wrapper.setProps({ displayDrawer: false, listNotifications: notifications });
+
+    // Expect shouldComponentUpdate not to have been called
+    expect(shouldComponentUpdateSpy).not.toHaveBeenCalled();
+
     shouldComponentUpdateSpy.mockRestore();
   });
 
-  it('rerenders when updating props with a longer list', () => {
-    const newNotifications = [
-      ...listNotifications,
-      { id: 4, type: 'default', value: 'New notification' },
+  it('should rerender when props are updated with a longer list', () => {
+    const initialNotifications = [
+      {
+        id: 1,
+        type: 'info',
+        value: 'Notification 1'
+      },
     ];
-    const shouldComponentUpdateSpy = jest.spyOn(Notifications.prototype, 'shouldComponentUpdate');
-    wrapper.setProps({ listNotifications: newNotifications });
-    expect(shouldComponentUpdateSpy).toHaveReturnedWith(true);
+
+    const updatedNotifications = [
+      {
+        id: 1,
+        type: 'info',
+        value: 'Notification 1',
+      },
+      {
+        id: 2,
+        type: 'warning',
+        value: 'Notification 2'
+      },
+    ];
+
+    const wrapper = shallow(
+      <Notifications displayDrawer={true} listNotifications={initialNotifications} />
+    );
+
+    const shouldComponentUpdateSpy = jest.spyOn(
+      Notifications.prototype,
+      'shouldComponentUpdate'
+    );
+
+    // Update props with a longer list
+    wrapper.setProps({ displayDrawer: false, listNotifications: updatedNotifications });
+
+    // Expect shouldComponentUpdate to have been called
+    expect(shouldComponentUpdateSpy).toHaveBeenCalled();
+
     shouldComponentUpdateSpy.mockRestore();
   });
 });
