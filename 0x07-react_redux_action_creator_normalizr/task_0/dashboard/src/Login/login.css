@@ -1,0 +1,23 @@
+.entry {
+  /* display: flex; */
+}
+
+.input-section {
+  display: flex;
+  flex-direction: row;
+}
+
+@media screen and (max-width: 900px) {
+  .input-section {
+    flex-direction: column;
+  }
+
+  .entry {
+    /* display: flex; */
+    margin-bottom: 5px;
+  }
+
+  .buton {
+    max-width: 50px;
+  }
+}
